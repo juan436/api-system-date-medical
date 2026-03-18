@@ -11,5 +11,9 @@ export class UpdatePatientDto {
 
   @IsOptional()
   @IsString()
+  cedula?: string;
+
+  @IsOptional()
+  @IsString()
   telefono?: string;
 }

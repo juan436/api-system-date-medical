@@ -67,6 +67,7 @@ export class AdminPatientsController {
     const updated = await this.userRepository.update(id, {
       ...(dto.nombre !== undefined && { nombre: dto.nombre }),
       ...(dto.apellido !== undefined && { apellido: dto.apellido }),
+      ...(dto.cedula !== undefined && { cedula: dto.cedula }),
       ...(dto.telefono !== undefined && { telefono: dto.telefono }),
     });
 
