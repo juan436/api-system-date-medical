@@ -4,6 +4,8 @@ import { envConfig } from './config/env.config';
 import { AuthModule } from './infrastructure/auth/auth.module';
 import { SchedulingModule } from './infrastructure/scheduling/scheduling.module';
 
+import { HealthController } from './infrastructure/http/controllers/health.controller';
+
 const config = envConfig();
 
 @Module({
@@ -12,5 +14,6 @@ const config = envConfig();
     AuthModule,
     SchedulingModule,
   ],
+  controllers: [HealthController],
 })
 export class AppModule {}

@@ -24,14 +24,14 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # Security: non-root user
 RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nestjs -u 1001 -G nodejs
+  adduser -S nestjs -u 1001 -G nodejs
 
 WORKDIR /app
 
 # Copy only production dependencies
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile --prod && \
-    pnpm store prune
+  pnpm store prune
 
 # Copy built application
 COPY --from=build /app/dist ./dist
@@ -47,6 +47,6 @@ EXPOSE 3001
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:3001/api || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:3001/api/health || exit 1
 
 CMD ["node", "dist/main"]
