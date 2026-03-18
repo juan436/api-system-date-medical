@@ -30,9 +30,12 @@ export class AuthController {
   @Post('register')
   async register(@Body() dto: RegisterDto) {
     try {
-      const user = await this.registerUseCase.execute(dto);
-      const { passwordHash, ...result } = user;
-      return result;
+      await this.registerUseCase.execute(dto);
+      // Auto-login after registration
+      return await this.loginUseCase.execute({
+        email: dto.email,
+        password: dto.password,
+      });
     } catch (error) {
       throw new BadRequestException((error as Error).message);
     }

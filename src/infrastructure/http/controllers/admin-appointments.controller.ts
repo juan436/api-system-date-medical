@@ -33,7 +33,12 @@ export class AdminAppointmentsController {
   ) {}
 
   @Get()
-  async getByDate(@Query('date') dateStr: string) {
+  async getByDate(
+    @Query('date') dateStr: string,
+    @Query('page') page = '1',
+    @Query('limit') limit = '10',
+    @Query('status') status?: string,
+  ) {
     if (!dateStr) {
       throw new BadRequestException('El parámetro "date" es requerido');
     }
@@ -46,10 +51,21 @@ export class AdminAppointmentsController {
     if (isNaN(date.getTime())) {
       throw new BadRequestException('Formato de fecha inválido');
     }
-    const appointments = await this.appointmentRepository.findByDate(date);
+
+    const pageNum = Math.max(1, parseInt(page, 10) || 1);
+    const limitNum = Math.min(50, Math.max(1, parseInt(limit, 10) || 10));
+    const validStatuses = ['confirmada', 'completada', 'cancelada'];
+    const statusFilter = status && validStatuses.includes(status) ? status : undefined;
+
+    const result = await this.appointmentRepository.findByDatePaginated(
+      date,
+      pageNum,
+      limitNum,
+      statusFilter,
+    );
 
     const enriched = await Promise.all(
-      appointments.map(async (appt) => {
+      result.data.map(async (appt) => {
         const [patient, service] = await Promise.all([
           this.userRepository.findById(appt.pacienteId),
           this.serviceRepository.findById(appt.servicioId),
@@ -63,7 +79,12 @@ export class AdminAppointmentsController {
       }),
     );
 
-    return enriched;
+    return {
+      data: enriched,
+      total: result.total,
+      page: result.page,
+      limit: result.limit,
+    };
   }
 
   @Get('patient/:pacienteId')

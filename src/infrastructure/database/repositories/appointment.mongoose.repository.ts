@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Appointment } from '../../../core/domain/entities/appointment.entity';
 import { AppointmentStatus } from '../../../core/domain/entities/appointment.entity';
-import { IAppointmentRepository } from '../../../core/domain/repositories/appointment.repository.interface';
+import { IAppointmentRepository, PaginatedAppointments } from '../../../core/domain/repositories/appointment.repository.interface';
 import { AppointmentModel, AppointmentDocument } from '../schemas/appointment.schema';
 import { AppointmentMapper } from '../mappers/appointment.mapper';
 
@@ -35,6 +35,41 @@ export class AppointmentMongooseRepository implements IAppointmentRepository {
       estado: { $nin: [AppointmentStatus.CANCELADA] },
     });
     return docs.map(AppointmentMapper.toDomain);
+  }
+
+  async findByDatePaginated(
+    date: Date,
+    page: number,
+    limit: number,
+    status?: string,
+  ): Promise<PaginatedAppointments> {
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const filter: Record<string, unknown> = {
+      fechaCita: { $gte: startOfDay, $lte: endOfDay },
+    };
+    if (status) {
+      filter.estado = status;
+    }
+
+    const [docs, total] = await Promise.all([
+      this.appointmentModel
+        .find(filter)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit),
+      this.appointmentModel.countDocuments(filter),
+    ]);
+
+    return {
+      data: docs.map(AppointmentMapper.toDomain),
+      total,
+      page,
+      limit,
+    };
   }
 
   async findByPacienteId(pacienteId: string): Promise<Appointment[]> {
