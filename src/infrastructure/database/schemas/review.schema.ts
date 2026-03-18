@@ -16,5 +16,3 @@ export class ReviewModel {
 }
 
 export const ReviewSchema = SchemaFactory.createForClass(ReviewModel);
-
-ReviewSchema.index({ pacienteId: 1 }, { unique: true });
