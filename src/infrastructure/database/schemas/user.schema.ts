@@ -12,6 +12,9 @@ export class UserModel {
   @Prop({ required: true, trim: true })
   apellido: string;
 
+  @Prop({ required: true, unique: true, trim: true })
+  cedula: string;
+
   @Prop({ required: true, unique: true, lowercase: true, trim: true })
   email: string;
 

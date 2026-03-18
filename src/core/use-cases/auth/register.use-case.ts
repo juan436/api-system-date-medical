@@ -4,6 +4,7 @@ import { IUserRepository } from '../../domain/repositories/user.repository.inter
 export interface RegisterInput {
   nombre: string;
   apellido: string;
+  cedula: string;
   email: string;
   password: string;
   telefono: string;
@@ -32,6 +33,7 @@ export class RegisterUseCase {
     return this.userRepository.create({
       nombre: input.nombre,
       apellido: input.apellido,
+      cedula: input.cedula,
       email: input.email,
       passwordHash,
       telefono: input.telefono,

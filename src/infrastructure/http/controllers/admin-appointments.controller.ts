@@ -94,17 +94,6 @@ export class AdminAppointmentsController {
     });
   }
 
-  @Patch(':id/confirm')
-  async confirm(@Param('id') id: string) {
-    const appointment = await this.appointmentRepository.findById(id);
-    if (!appointment) {
-      throw new BadRequestException('Cita no encontrada');
-    }
-    return this.appointmentRepository.update(id, {
-      estado: AppointmentStatus.CONFIRMADA,
-    });
-  }
-
   @Patch(':id/cancel')
   async cancel(@Param('id') id: string) {
     const appointment = await this.appointmentRepository.findById(id);

@@ -12,6 +12,7 @@ export interface User {
   id?: string;
   nombre: string;
   apellido: string;
+  cedula: string;
   email: string;
   passwordHash: string;
   telefono: string;

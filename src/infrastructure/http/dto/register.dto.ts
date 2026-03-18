@@ -9,6 +9,10 @@ export class RegisterDto {
   @IsString()
   apellido: string;
 
+  @IsNotEmpty()
+  @IsString()
+  cedula: string;
+
   @IsEmail()
   email: string;
 

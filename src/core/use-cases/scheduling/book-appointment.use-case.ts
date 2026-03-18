@@ -35,7 +35,7 @@ export class BookAppointmentUseCase {
       pacienteId: input.pacienteId,
       servicioId: input.servicioId,
       fechaCita: input.fechaCita,
-      estado: AppointmentStatus.PENDIENTE,
+      estado: AppointmentStatus.CONFIRMADA,
       notasPaciente: input.notasPaciente,
     });
   }

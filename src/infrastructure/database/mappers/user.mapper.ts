@@ -8,6 +8,7 @@ export class UserMapper {
       id: doc._id.toString(),
       nombre: doc.nombre,
       apellido: doc.apellido,
+      cedula: doc.cedula,
       email: doc.email,
       passwordHash: doc.passwordHash,
       telefono: doc.telefono,

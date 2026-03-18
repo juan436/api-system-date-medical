@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserRole } from '../../../core/domain/entities/user.entity';
-import { IUserRepository } from '../../../core/domain/repositories/user.repository.interface';
+import { IUserRepository, PaginatedResult } from '../../../core/domain/repositories/user.repository.interface';
 import { UserModel, UserDocument } from '../schemas/user.schema';
 import { UserMapper } from '../mappers/user.mapper';
 
@@ -30,5 +30,39 @@ export class UserMongooseRepository implements IUserRepository {
   async findByRole(role: UserRole): Promise<User[]> {
     const docs = await this.userModel.find({ rol: role });
     return docs.map(UserMapper.toDomain);
+  }
+
+  async searchPatients(query: string, page: number, limit: number): Promise<PaginatedResult<User>> {
+    const filter: Record<string, unknown> = { rol: UserRole.PACIENTE };
+
+    if (query) {
+      const regex = { $regex: query, $options: 'i' };
+      filter.$or = [
+        { nombre: regex },
+        { apellido: regex },
+        { cedula: regex },
+      ];
+    }
+
+    const [docs, total] = await Promise.all([
+      this.userModel
+        .find(filter)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit),
+      this.userModel.countDocuments(filter),
+    ]);
+
+    return {
+      data: docs.map(UserMapper.toDomain),
+      total,
+      page,
+      limit,
+    };
+  }
+
+  async update(id: string, data: Partial<User>): Promise<User | null> {
+    const doc = await this.userModel.findByIdAndUpdate(id, data, { new: true });
+    return doc ? UserMapper.toDomain(doc) : null;
   }
 }
