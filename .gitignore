@@ -1,0 +1,44 @@
+# Node modules
+node_modules/
+
+# Build artifacts
+dist/
+build/
+
+# Compiled files
+*.js
+*.js.map
+*.d.ts
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Testing
+coverage/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDEs/Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project specific
+/uploads/
+/temp/
+
+# Docker (Optional - normally committed, ignore if using sensitive data in it)
+docker-compose.yml
+docker-compose.override.yml
